@@ -51,11 +51,11 @@ def check_and_update():
                     print("Restarting in a new window...")
 
                     if os.name == 'nt':
-                        subprocess.Popen('start "IPPulse" python main.py', shell=True)
+                        subprocess.Popen('start cmd /k "python main.py"', shell=True, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
                     else:
                         os.execv(sys.executable, [sys.executable] + sys.argv)
                     
-                    sys.exit(0)
+                    os._exit(0)
                 else:
                     print("Error updating files.")
     except Exception:
