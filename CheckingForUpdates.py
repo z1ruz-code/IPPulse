@@ -33,11 +33,11 @@ def check_and_update():
         latest_version = latest_data.get("tag_name", "").lstrip('v')
 
         if latest_version and latest_version != current_version:
-            print(f"\n[!] Доступно обновление: {current_version} -> {latest_version}")
-            choice = input("Обновить программу и перезапустить? (y/n): ").lower()
+            print(f"\n[!] Update available: {current_version} -> {latest_version}")
+            choice = input("Update and restart? (y/n): ").lower()
             
             if choice == 'y':
-                print("Загрузка актуальных компонентов...")
+                print("Downloading updates...")
                 
                 files_to_update = ["main.py", "CheckingForUpdates.py", "config.json"]
                 
@@ -47,16 +47,16 @@ def check_and_update():
                         success = False
                 
                 if success:
-                    print("Обновление завершено успешно.")
-                    print("Запуск новой версии в отдельном окне...")
+                    print("Update successful.")
+                    print("Restarting in a new window...")
 
                     if os.name == 'nt':
-                        subprocess.Popen('start "IPPulse Update" python main.py', shell=True)
+                        subprocess.Popen('start "IPPulse" python main.py', shell=True)
                     else:
                         os.execv(sys.executable, [sys.executable] + sys.argv)
                     
-                    sys.exit()
+                    sys.exit(0)
                 else:
-                    print("Ошибка при обновлении некоторых файлов.")
+                    print("Error updating files.")
     except Exception:
         pass
