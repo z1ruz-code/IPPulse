@@ -46,12 +46,11 @@ def check_and_update():
                         success = False
                 
                 if success:
-                    print("\n" + "="*40)
                     print("UPDATE SUCCESSFUL!")
                     print("Please restart the program (python main.py)")
-                    print("="*40)
                     os._exit(0)
                 else:
                     print("Error updating files.")
     except Exception:
         pass
+
