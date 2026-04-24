@@ -1,40 +1,55 @@
 import requests
 import json
-import time
 import os
+import sys
+import time
+import ipaddress
 import CheckingForUpdates
 
-CheckingForUpdates.check_and_update()
+def is_valid_ip(ip_str: str) -> bool:
+    try:
+        ipaddress.ip_address(ip_str)
+        return True
+    except ValueError:
+        return False
 
-print("IPPulse by z1ruz-code")
-ip_address = input("Enter IP address: ")
-url = f"https://api.ipapi.is/?q={ip_address}"
+def main():
+    CheckingForUpdates.check_and_update()
 
-try:
+    print("IPPulse by z1ruz-code")
+
+    ip_address = input("Введите IP-адрес: ").strip()
+    if not is_valid_ip(ip_address):
+        print("Некорректный IP-адрес. Введите правильный IPv4 или IPv6 адрес.")
+        sys.exit(1)
+
+    url = f"https://api.ipapi.is/?q={ip_address}"
+
     response = requests.get(url)
-    response.raise_for_status()
     data = response.json()
 
-    if "company" in data:
-        data["company"].pop("whois", None)
-    if "asn" in data:
-        data["asn"].pop("whois", None)
+    if "company" in data and "whois" in data["company"]:
+        del data["company"]["whois"]
+    if "asn" in data and "whois" in data["asn"]:
+        del data["asn"]["whois"]
 
-    json_output = json.dumps(data, indent=4)
-    
+    json_output = json.dumps(data, indent=4, ensure_ascii=False)
     for line in json_output.splitlines():
         print(line)
         time.sleep(0.01)
 
-    save_choice = input("\nSave result to .txt? (y/n): ").lower()
-    if save_choice == 'y':
+    save = input("\nСохранить результат в .txt? (y/n): ").lower()
+    if save == "y":
         folder = "reports"
         os.makedirs(folder, exist_ok=True)
-        filepath = os.path.abspath(os.path.join(folder, f"{ip_address}.txt"))
+        filepath = os.path.join(folder, f"{ip_address}.txt")
         with open(filepath, "w", encoding="utf-8") as file:
-            file.write(json_output)
-        print(f"Saved: {filepath}")
+            json.dump(data, file, indent=4, ensure_ascii=False)
+        print(f"Отчёт сохранён: {filepath}")
 
-except requests.exceptions.RequestException as e:
-
-    print(f"Error: {e}")
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nПрограмма прервана пользователем.")
+        sys.exit(0)
