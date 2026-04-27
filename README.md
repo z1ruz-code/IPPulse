@@ -37,6 +37,7 @@ cd IPPulse
 ```Bash
 python main.py
 ```
+или откройте `start.bat`
 
 ## 📁 Архитектура и структура проекта
 
